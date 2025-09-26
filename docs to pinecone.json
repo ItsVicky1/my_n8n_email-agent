@@ -1,0 +1,180 @@
+{
+  "name": "docs to pinecone",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "acc385f7-afef-42ff-a168-de1d5d432d6e",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1AKgBIKKky-teYbeW5fu6KI2SLDP0rtZoSvvZU8ZXMok/edit?tab=t.0"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "f47f312a-7065-40e8-b71e-37ca59a57aea",
+      "name": "Get a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "IoTO95OwlGWX0teo",
+          "name": "Google Docs account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "doss-to-pinecone",
+          "mode": "list",
+          "cachedResultName": "doss-to-pinecone"
+        },
+        "options": {
+          "pineconeNamespace": "docs-to-pinecone"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        464,
+        -16
+      ],
+      "id": "89630836-bb94-4784-b740-2abb00a37736",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "O0kQZ5ThlXNEkVFJ",
+          "name": "PineconeApi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "mxbai-embed-large:latest"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+      "typeVersion": 1,
+      "position": [
+        416,
+        176
+      ],
+      "id": "1504ce7a-dde0-452c-af9e-95c3948e693f",
+      "name": "Embeddings Ollama",
+      "credentials": {
+        "ollamaApi": {
+          "id": "EPSN33saa0kMYIuc",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        192
+      ],
+      "id": "c73e1c3e-75b1-429c-abff-4d3712bcc665",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkOverlap": 400,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        752,
+        416
+      ],
+      "id": "1d8a54de-402c-454b-be66-62e7f54b4be8",
+      "name": "Recursive Character Text Splitter1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Ollama": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a document": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter1": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "60bbef0c-5d32-4e98-accc-02ddb60c73bd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d851df2a37d475da76fde6da02d32e26fcfc75fe0331a294313be23f87de3c92"
+  },
+  "id": "13gGKFH1OMOP1SBf",
+  "tags": []
+}
