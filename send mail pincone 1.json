@@ -1,0 +1,133 @@
+{
+  "name": "send mail pincone 1",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6ba73c7d-4e86-4586-b461-648e5b8d0a8c",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "You are a helpful assistant  to send mail ."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "7bd3fe98-2ac3-4033-9d11-dc831309837a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        80,
+        208
+      ],
+      "id": "bd6290e5-915a-4f28-98fa-7b39657f7c4b",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "qOlrypIJRs3bUFr7",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        368,
+        208
+      ],
+      "id": "69e390cd-190a-40df-8fb3-620650aa446d",
+      "name": "Send a message in Gmail",
+      "webhookId": "64b39a6e-5cc3-4285-a121-2eff5d9a492f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QfcHcuHOZgBOige4",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "query": "To: bhagwatvikas5@gamil.com\nSubject: Hello Vikas\n\nHello Vikas,\n\nI hope you are doing well. Hello.\n\nBest regards,\nArnie"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "778910fb-764d-4f55-9690-5b4bc34cd32d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d851df2a37d475da76fde6da02d32e26fcfc75fe0331a294313be23f87de3c92"
+  },
+  "id": "SlizwvbQZTI8vA5A",
+  "tags": []
+}
